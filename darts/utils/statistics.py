@@ -259,7 +259,8 @@ def plot_acf(ts: TimeSeries,
              max_lag: int = 24,
              alpha: float = 0.05,
              fig_size: Tuple[int, int] = (10, 5),
-             axis: Optional[plt.axis] = None) -> None:
+             axis: Optional[plt.axis] = None,
+             title: Optional[str] = None) -> None:
     """
     Plots the ACF of `ts`, highlighting it at lag `m`, with corresponding significance interval.
 
@@ -277,6 +278,8 @@ def plot_acf(ts: TimeSeries,
         The size of the figure to be displayed.
     axis
         Optionally, an axis object to plot the ACF on.
+    title
+        A title for the plot
     """
 
     ts._assert_univariate()
@@ -288,7 +291,7 @@ def plot_acf(ts: TimeSeries,
     for i in range(1, max_lag + 1):
         stats.append(_bartlett_formula(r[1:], i, len(ts)))
 
-    if (axis is None):
+    if axis is None:
         plt.figure(figsize=fig_size)
         axis = plt
 
@@ -303,6 +306,9 @@ def plot_acf(ts: TimeSeries,
 
     axis.fill_between(np.arange(1, max_lag + 1), acf_band, [-x for x in acf_band], color='#003DFD', alpha=.25)
     axis.plot((0, max_lag + 1), (0, 0), color='black')
+
+    if title is not None:
+        axis.title(title)
 
 
 def plot_residuals_analysis(residuals: TimeSeries,

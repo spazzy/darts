@@ -620,7 +620,7 @@ class TimeSeries:
         if 'label' in kwargs:
             label = kwargs['label']
         for i in range(self.width):
-            if i > 0:
+            if self.width > 1:
                 kwargs['figure'] = plt.gcf()
                 if 'label' in kwargs:
                     kwargs['label'] = label + '_' + str(i)
