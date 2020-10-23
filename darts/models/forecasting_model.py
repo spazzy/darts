@@ -289,10 +289,10 @@ class ForecastingModel(ABC):
         specifed.
         Note that the model is retrained for every single prediction, thus this mode is slower.
 
-        Split window mode (activated when `val_series` is passed):
-        This mode will be used when the `val_series` argument is passed.
+        Split window mode (activated when `val_target_series` is passed):
+        This mode will be used when the `val_target_series` argument is passed.
         For every hyperparameter combination, the model is trained on `training_series` + `target_series` and
-        evaluated on `val_series`.
+        evaluated on `val_target_series`.
 
         Fitted value mode (activated when `use_fitted_values` is set to `True`):
         For every hyperparameter combination, the model is trained on `training_series` + `target_series`
