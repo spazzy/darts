@@ -271,7 +271,7 @@ class ForecastingModel(ABC):
         last_points_values = []
 
         if not retrain and not self._fit_called:
-            fit_function(training_series.drop_after(start), target_series.drop_after(start), verbose=verbose)
+            fit_function(training_series.drop_after(start), target_series.drop_after(start))
 
         for pred_time in iterator:
             train = training_series.drop_after(pred_time)   # build the training series
