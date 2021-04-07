@@ -16,37 +16,11 @@ build:
 requirements:
   host:
     - python
-    - numpy==1.19.2
-    - scipy==1.5.0
-    - statsmodels==0.12.2
-    - matplotlib==3.2.2
-    - pandas==1.1.0
-    - ipython==7.15.0
-    - tqdm==4.46.1
-    - holidays==0.11.1
-    - scikit-learn==0.23.2
-    - pmdarima==1.8.0
-    - pytorch==1.7.1
-    - tensorboard==2.4.0
-    - pystan==2.19.1.1
-    - fbprophet==0.7.1
+    %%%
 
   run:
     - python
-    - numpy==1.19.2
-    - scipy==1.5.0
-    - statsmodels==0.12.2
-    - matplotlib==3.2.2
-    - pandas==1.1.0
-    - ipython==7.15.0
-    - tqdm==4.46.1
-    - holidays==0.11.1
-    - scikit-learn==0.23.2
-    - pmdarima==1.8.0
-    - pytorch==1.7.1
-    - tensorboard==2.4.0
-    - pystan==2.19.1.1
-    - fbprophet==0.7.1
+    %%%
 
 test:
   imports:
