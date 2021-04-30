@@ -6,7 +6,7 @@ import pandas as pd
 
 from ..timeseries import TimeSeries
 from ..logging import raise_log, get_logger, raise_if_not, raise_if
-from typing import List, Callable, TypeVar, Union
+from typing import List, Callable, TypeVar, Iterator
 from IPython import get_ipython
 from tqdm import tqdm
 from tqdm.notebook import tqdm as tqdm_notebook
@@ -14,6 +14,7 @@ from functools import wraps
 from types import SimpleNamespace
 from inspect import signature, Parameter, getcallargs
 from enum import Enum
+from joblib import Parallel, delayed
 
 logger = get_logger(__name__)
 
@@ -40,17 +41,14 @@ def retain_period_common_to_all(series: List[TimeSeries]) -> List[TimeSeries]:
     """
     Trims all series in the provided list, if necessary, so that the returned time series have
     a common span (corresponding to largest time sub-interval common to all series).
-
     Parameters
     ----------
     series
         The list of series to consider.
-
     Raises
     ------
     ValueError
         If no common time sub-interval exists
-
     Returns
     -------
     List[TimeSeries]
@@ -69,7 +67,6 @@ def retain_period_common_to_all(series: List[TimeSeries]) -> List[TimeSeries]:
 def _build_tqdm_iterator(iterable, verbose, **kwargs):
     """
     Build an iterable, possibly using tqdm (either in notebook or regular mode)
-
     Parameters
     ----------
     iterable
@@ -79,7 +76,6 @@ def _build_tqdm_iterator(iterable, verbose, **kwargs):
 
     Returns
     -------
-
     """
 
     def _isnotebook():
@@ -116,22 +112,18 @@ def _with_sanity_checks(*sanity_check_methods: str) -> Callable[[Callable[[A, B]
     Decorator allowing to specify some sanity check method(s) to be used on a class method.
     The decorator guarantees that args and kwargs from the method to sanitize will be available in the
     sanity check methods as specified in the sanitized method's signature, irrespective of how it was called.
-
     Parameters
     ----------
     *sanity_check_methods
         one or more sanity check methods that will be called with all the parameter of the decorated method.
-
     Returns
     -------
     A Callable corresponding to the decorated method.
-
     Examples
     --------
     class Model:
         def _a_sanity_check(self, *args, **kwargs):
             raise_if_not(kwargs['b'] == kwargs['c'], 'b must equal c', logger)
-
         @_with_sanity_checks("_a_sanity_check")
         def fit(self, a, b=0, c=0):
             # at this point we can safely assume that 'b' and 'c' are equal...
@@ -165,7 +157,6 @@ def _with_sanity_checks(*sanity_check_methods: str) -> Callable[[Callable[[A, B]
 def _historical_forecasts_general_checks(series, kwargs):
     """
     Performs checks common to ForecastingModel and RegressionModel backtest() methods
-
     Parameters
     ----------
     series
@@ -216,3 +207,9 @@ def _historical_forecasts_general_checks(series, kwargs):
         raise_if_not(start + series.freq() * forecast_horizon in series,
                      '`start` timestamp is too late in the series to make any predictions with'
                      '`overlap_end` set to `False`.', logger)
+
+
+def _parallel_apply(iterator: Iterator, fn: Callable, n_jobs: int = 1, fn_args=None, fn_kwargs=None) -> List:
+    returned_data = Parallel(n_jobs=n_jobs)(delayed(fn)(*sample, *fn_args, **fn_kwargs)
+                                            for sample in iterator)
+    return returned_data
