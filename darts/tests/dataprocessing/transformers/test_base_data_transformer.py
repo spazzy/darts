@@ -22,6 +22,10 @@ class BaseDataTransformerTestCase(unittest.TestCase):
                              name="DataTransformerMock")
             self.transform_called = False
 
+        @staticmethod
+        def ts_transform(series: TimeSeries) -> TimeSeries:
+            return series + 10
+
     def test_input_transformed(self):
         # given
         test_input = constant_timeseries(value=1)
