@@ -45,21 +45,21 @@ class AutoARIMA(ExtendedForecastingModel):
         super().fit(series, exog)
         series = self.training_series
         self.model.fit(series.values(),
-                       exogenous=exog.values() if exog else None)
+                       X=exog.values() if exog else None)
 
     def predict(self, n: int, exog: Optional[TimeSeries] = None):
         super().predict(n, exog)
         forecast = self.model.predict(n_periods=n,
-                                      exogenous=exog.values() if exog else None)
+                                      X=exog.values() if exog else None)
         return self._build_forecast_series(forecast)
 
     @property
     def min_train_series_length(self) -> int:
         return 30
 
-    def _supports_dummy_index(self) -> bool:
+    def _supports_range_index(self) -> bool:
         raise_if(self.trend and self.trend != "c",
-            "'trend' is not None. Dummy indexing is not supported in that case.",
+            "'trend' is not None. Range indexing is not supported in that case.",
             logger
         )
         return True

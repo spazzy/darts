@@ -3,7 +3,7 @@
 """
 
 from darts import TimeSeries, ModelMode, SeasonalityMode
-from darts.models import NaiveSeasonal, ExponentialSmoothing, Theta, FourTheta, StandardRegressionModel
+from darts.models import NaiveSeasonal, ExponentialSmoothing, Theta, FourTheta, LinearRegressionModel
 from darts.models.forecasting_model import ForecastingModel
 from darts.utils.statistics import check_seasonality, remove_from_series, extract_trend_and_seasonality
 from darts.utils.timeseries_generation import constant_timeseries
@@ -72,7 +72,7 @@ def groe_owa(ts: TimeSeries, model: ForecastingModel, n1: int, m: int, p: int, f
         if npred >= 3:
             test = ts[ni:]
         else:
-            test = TimeSeries(ts.pd_series()[ni:], freq=ts.freq_str())
+            test = TimeSeries(ts.pd_series()[ni:], freq=ts.freq_str)
 
         forecast_naive2 = naive2_groe(train, npred, fq)
         error_sape_n2 = mase_m4(train, test, forecast_naive2)
@@ -137,7 +137,7 @@ if __name__ == "__main__":
             # remove seasonality
             train_des = train
             seasonOut = 1
-            season = constant_timeseries(length=len(train), freq=train.freq_str(), start_ts=train.start_time())
+            season = constant_timeseries(length=len(train), freq=train.freq_str, start_ts=train.start_time())
             if m > 1:
                 if check_seasonality(train, m=m, max_lag=2 * m):
                     pass
@@ -181,7 +181,7 @@ if __name__ == "__main__":
             val_predictions = train_pred(id_end=-len(test))
             target_val = train.slice_intersect(val_predictions[0])
 
-            regr_model = StandardRegressionModel(train_n_points=len(test),
+            regr_model = LinearRegressionModel(train_n_points=len(test),
                                                  model=LassoCV(positive=True, fit_intercept=False))
             regr_model.fit(val_predictions, target_val)
 

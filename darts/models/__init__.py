@@ -23,9 +23,10 @@ try:
     from .prophet import Prophet
 except ModuleNotFoundError:
     logger.warning("Support Facebook Prophet is not available. "
-                   "To enable it, install u8darts[fbprophet] or u8darts[all].")
+                   "To enable it, install u8darts[prophet] or u8darts[all].")
 
 try:
+    from .block_rnn_model import BlockRNNModel
     from .rnn_model import RNNModel
     from .tcn_model import TCNModel
     from .nbeats import NBEATSModel
@@ -35,7 +36,9 @@ except ModuleNotFoundError:
     logger.warning("Support Torch based models not available. To enable it, install u8darts[torch] or u8darts[all].")
 
 # Regression
-from .standard_regression_model import StandardRegressionModel
+from .linear_regression_model import LinearRegressionModel
+from .random_forest import RandomForest
+from .regression_model import RegressionModel
 
 # Ensembling
 from .ensemble_model import EnsembleModel

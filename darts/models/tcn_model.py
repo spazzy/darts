@@ -96,9 +96,10 @@ class _ResidualBlock(nn.Module):
 
         # second step
         x = F.pad(x, (left_padding, 0))
+        x = self.conv2(x)
         if self.nr_blocks_below < self.num_layers - 1:
             x = F.relu(x)
-        x = self.dropout_fn((self.conv2(x)))
+        x = self.dropout_fn(x)
 
         # add residual
         if self.nr_blocks_below in {0, self.num_layers - 1}:
@@ -283,7 +284,7 @@ class TCNModel(TorchForecastingModel):
         return ShiftedDataset(target_series=target,
                               covariates=covariates,
                               length=self.input_chunk_length,
-                              shift=1)
+                              shift=self.output_chunk_length)
 
     @property
     def first_prediction_index(self) -> int:

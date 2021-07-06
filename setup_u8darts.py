@@ -9,9 +9,9 @@ def read_requirements(path):
 base_reqs = read_requirements('requirements/core.txt')
 pmdarima_reqs = read_requirements('requirements/pmdarima.txt')
 torch_reqs = read_requirements('requirements/torch.txt')
-fbprophet_reqs = read_requirements('requirements/fbprophet.txt')
+prophet_reqs = read_requirements('requirements/prophet.txt')
 
-all_reqs = base_reqs + pmdarima_reqs + torch_reqs + fbprophet_reqs
+all_reqs = base_reqs + pmdarima_reqs + torch_reqs + prophet_reqs
 
 with open("README.md", "r") as fh:
     LONG_DESCRIPTION = fh.read()
@@ -29,7 +29,7 @@ PROJECT_URLS = {
 
 setup(
       name='u8darts',
-      version="0.6.1",
+      version="0.8.1",
       description='A python library for easy manipulation and forecasting of time series.',
       long_description=LONG_DESCRIPTION,
       long_description_content_type="text/markdown",
@@ -44,13 +44,13 @@ setup(
             'all': all_reqs,
             'pmdarima': pmdarima_reqs,
             'torch': torch_reqs,
-            'fbprophet': fbprophet_reqs,
+            'prophet': prophet_reqs,
       },
       package_data={
           'darts': ['py.typed'],
       },
       zip_safe=False,
-      python_requires='>=3.6',
+      python_requires='>=3.7',
       classifiers=[
             'Intended Audience :: Science/Research',
             'Intended Audience :: Developers',
@@ -62,7 +62,6 @@ setup(
             'Operating System :: Unix',
             'Operating System :: MacOS',
             'Programming Language :: Python :: 3',
-            'Programming Language :: Python :: 3.6',
             'Programming Language :: Python :: 3.7',
             'Programming Language :: Python :: 3.8',
             'Programming Language :: Python :: 3.9',

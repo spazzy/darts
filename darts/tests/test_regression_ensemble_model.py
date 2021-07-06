@@ -1,18 +1,18 @@
 import logging
 
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
 
 from .base_test_class import DartsBaseTestClass
 from ..utils import timeseries_generation as tg
 from ..models import NaiveDrift, NaiveSeasonal
-from ..models import StandardRegressionModel
-from ..models import RegressionEnsembleModel
+from ..models import RegressionEnsembleModel, LinearRegressionModel, RandomForest
 from ..logging import get_logger
 
 logger = get_logger(__name__)
 
 try:
-    from ..models import RNNModel
+    from ..models import BlockRNNModel
     TORCH_AVAILABLE = True
 except ImportError:
     logger.warning('Torch not available. Some tests will be skipped.')
@@ -29,24 +29,35 @@ class RegressionEnsembleModelsTestCase(DartsBaseTestClass):
         return [NaiveDrift(), NaiveSeasonal(5), NaiveSeasonal(10)]
 
     def test_accepts_different_regression_models(self):
-        regr1 = StandardRegressionModel()
+        regr1 = LinearRegression()
         regr2 = RandomForestRegressor()
+        regr3 = RandomForest(lags_exog=0)
 
         model0 = RegressionEnsembleModel(self.get_models(), 10)
         model1 = RegressionEnsembleModel(self.get_models(), 10, regr1)
         model2 = RegressionEnsembleModel(self.get_models(), 10, regr2)
+        model3 = RegressionEnsembleModel(self.get_models(), 10, regr3)
+
+        models = [model0, model1, model2, model3]
+        for model in models:
+            model.fit(series=self.combined)
+            model.predict(10)
+
+    def test_accepts_one_model(self):
+        regr1 = LinearRegression()
+        regr2 = RandomForest(lags_exog=0)
+
+        model0 = RegressionEnsembleModel([self.get_models()[0]], 10)
+        model1 = RegressionEnsembleModel([self.get_models()[0]], 10, regr1)
+        model2 = RegressionEnsembleModel([self.get_models()[0]], 10, regr2)
 
         models = [model0, model1, model2]
         for model in models:
-            model.fit(self.combined)
+            model.fit(series=self.combined)
             model.predict(10)
 
     def test_train_n_points(self):
-        regr = StandardRegressionModel(train_n_points=5)
-
-        # ambiguous values
-        with self.assertRaises(ValueError):
-            ensemble = RegressionEnsembleModel(self.get_models(), 10, regr)
+        regr = LinearRegressionModel(lags_exog=[0])
 
         # same values
         ensemble = RegressionEnsembleModel(self.get_models(), 5, regr)
@@ -67,8 +78,8 @@ class RegressionEnsembleModelsTestCase(DartsBaseTestClass):
 
     if TORCH_AVAILABLE:
         def test_torch_models_retrain(self):
-            model1 = RNNModel(input_chunk_length=12, output_chunk_length=1, random_state=0, n_epochs=2)
-            model2 = RNNModel(input_chunk_length=12, output_chunk_length=1, random_state=0, n_epochs=2)
+            model1 = BlockRNNModel(input_chunk_length=12, output_chunk_length=1, random_state=0, n_epochs=2)
+            model2 = BlockRNNModel(input_chunk_length=12, output_chunk_length=1, random_state=0, n_epochs=2)
 
             ensemble = RegressionEnsembleModel([model1], 5)
             ensemble.fit(self.combined)
@@ -79,4 +90,4 @@ class RegressionEnsembleModelsTestCase(DartsBaseTestClass):
             model2.fit(self.combined)
             forecast2 = model2.predict(10)
 
-            self.assertAlmostEqual(sum(forecast1.values() - forecast2.values())[0], 0., places=3)
+            self.assertAlmostEqual(sum(forecast1.values() - forecast2.values())[0], 0., places=2)
