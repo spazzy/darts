@@ -2,24 +2,24 @@
 
 package:
   name: "darts"
-  version: "0.6.1"
+  version: {{ data.get('version') }}
 
 source:
   # root folder, not the package
   path: "../../../darts"
 
 build:
-  noarch: python
   number: 0
-  script: '{{ PYTHON }} -m pip install . -vv'
+  noarch: python
+  script: '{{ PYTHON }} -m pip install . --no-deps -vv'
 
 requirements:
   host:
-    - python
-    %%%
+    - python >=3.7
+    - pip
 
   run:
-    - python
+    - python >=3.7
     %%%
 
 test:
@@ -27,13 +27,22 @@ test:
     - darts
     - darts.dataprocessing
     - darts.dataprocessing.transformers
+    - darts.datasets
     - darts.metrics
     - darts.models
     - darts.tests
     - darts.tests.dataprocessing
     - darts.tests.dataprocessing.transformers
+    - darts.tests.utils
     - darts.utils
     - darts.utils.data
+  source_files:
+    - darts
+  commands:
+    - python -m unittest
+  requires:
+    - pip
+    - testfixtures
 
 about:
   home: {{ data.get('url') }}
@@ -44,4 +53,6 @@ about:
 
 extra:
   recipe-maintainers:
-    - {{ data.get('maintainer') }}
+    - unit8co
+    - hrzn
+    - tomasvanpottelbergh

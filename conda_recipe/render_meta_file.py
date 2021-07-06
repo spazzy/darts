@@ -4,7 +4,7 @@ import os
 PACKAGE = 'darts'
 DIR = os.path.join(Path(__file__).parent.absolute(), PACKAGE)
 REQS_DIR = os.path.join(Path(__file__).parent.absolute(), '..', 'requirements')
-REQ_FILES = ['core.txt', 'pmdarima.txt', 'torch.txt', 'fbprophet.txt']
+REQ_FILES = ['core.txt', 'pmdarima.txt', 'torch.txt', 'prophet.txt']
 IN_FILE = 'meta-template.yaml'
 OUT_FILE = 'meta.yaml'
 
@@ -18,6 +18,8 @@ all_reqs = [item for sublist in reqs_list for item in sublist]
 
 # torch is named pytorch in anaconda
 reqs_string = '- ' + '\n    - '.join(all_reqs).replace('torch', 'pytorch')
+# add space in front of >=
+reqs_string = reqs_string.replace('>=', ' >=')
 
 
 # read meta-template.yaml and write to meta.yaml, filling in our dependencies
