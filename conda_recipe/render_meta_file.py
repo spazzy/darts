@@ -16,8 +16,9 @@ def read_requirements(fname):
 reqs_list = [read_requirements(fname) for fname in REQ_FILES]
 all_reqs = [item for sublist in reqs_list for item in sublist]
 
-# torch is named pytorch in anaconda
-reqs_string = '- ' + '\n    - '.join(all_reqs).replace('torch', 'pytorch')
+reqs_string = '- ' + '\n    - '.join(all_reqs)
+# replace packages by conda-forge equivalents
+reqs_string = reqs_string.replace('torch', 'pytorch').replace('matplotlib', 'matplotlib-base')
 # add space in front of >=
 reqs_string = reqs_string.replace('>=', ' >=')
 
